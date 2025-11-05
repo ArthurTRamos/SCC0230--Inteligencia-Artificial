@@ -1,1 +1,1 @@
-# SCC0230---Intelig-ncia-Artificial
+# SCC0230---Inteligencia-Artificial
