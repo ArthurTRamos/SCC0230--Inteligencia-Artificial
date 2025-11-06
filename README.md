@@ -1,4 +1,4 @@
-# SCC0230---Inteligencia-Artificial
+# SCC0230--Inteligencia-Artificial
 
 Integrantes:
 - Arthur Trottmann Ramos - 14681052
