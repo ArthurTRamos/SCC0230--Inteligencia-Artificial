@@ -1,0 +1,15 @@
+[theme]
+# Cor Principal (Botões, sliders, foco): Um verde "grama sintética" forte
+primaryColor = "#00C853"
+
+# Fundo Principal: Branco puro para máxima legibilidade contra a luz
+backgroundColor = "#FFFFFF"
+
+# Fundo da Sidebar: Um cinza muito leve (quase branco) para separar sutilmente
+secondaryBackgroundColor = "#F0F2F6"
+
+# Texto: Cinza escuro quase preto (Causa menos fadiga que preto puro #000000)
+textColor = "#31333F"
+
+# Fonte padrão
+font = "sans serif"
