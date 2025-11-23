@@ -2,6 +2,27 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import base64
+import joblib
+
+from predict import predict_result
+
+# Abertura de dataframes e de modelos
+home_df = pd.read_csv('dataframes/home_df.csv')
+away_df = pd.read_csv('dataframes/away_df.csv')
+home_df_minmax = pd.read_csv('dataframes/home_df_minmax.csv')
+away_df_minmax = pd.read_csv('dataframes/away_df_minmax.csv')
+
+xgboost = joblib.load('models/xgBoost.pkl')
+randomForest = joblib.load('models/randomForest.pkl')
+regressor = joblib.load('models/regressao.pkl')
+knn = joblib.load('models/knn.pkl')
+
+models_to_select = {
+    'XGBoost': xgboost,
+    'RandomForest': randomForest,
+    'Regressão Logística': regressor,
+    'KNN': knn
+}
 
 # Configurações da Página
 st.set_page_config(page_title="Vidente do Futebol", # Titulo da Guia
@@ -39,36 +60,21 @@ st.markdown("""
 def img_to_base64(path):
     with open(path, "rb") as f:
         return base64.b64encode(f.read()).decode()
-
-## Modelos
-def M1(a, b):
-    return a
-
-def M2(a, b):
-    return b
-
-def M3(a,b):
-    array = [a,b]
-    return sorted(array)[0]
-
-def M4(a, b):
-    return np.random.choice([a,b])
     
 # Dados
 ## Dataframe Modelos
 df_model = pd.DataFrame({
-    'Modelo': ['Modelo 1', 'Modelo 2', 'Modelo 3', 'Modelo 4'],
-    'Function': [M1, M2, M3, M4],
-    'Desc': ["O modelo 1 sempre retorna o primeiro.",
-             "O modelo 2 sempre retorna o segundo.",
-             "O modelo 3 retorna o primeiro em ordem alfabética.",
-             "O modelo 4 retorna um aleatório."]
+    'Modelo': ['XGBoost', 'RandomForest', 'Regressão Logística', 'KNN'],
+    'Desc': ["✅ Cria várias ‘árvores’ que aprendem juntas, uma corrigindo os erros da outra",
+             "🌲 Muitas árvores tomam decisões separadas e o modelo escolhe a mais votada",
+             "📈 Pesa os fatores do jogo para calcular a probabilidade de cada resultado",
+             "👥 Compara o jogo com partidas parecidas do passado para prever o resultado"]
 }).set_index('Modelo')
 
 ## Dataframe Times
-df_times = pd.DataFrame({'Time': ['Atlético Mineiro', 'Bahia', 'Botafogo', 'Ceará', 'Corinthians', 'Cruzeiro', 'Flamengo', 'Fluminense',
-                                  'Fortaleza', 'Grêmio', 'Internacional', 'Juventude', 'Mirassol', 'Palmeiras', 'Bragantino', 'Santos',
-                                  'São Paulo', 'Sport', 'Vasco da Gama', 'Vitória']})
+df_times = pd.DataFrame({'Time': ['Atlético Mineiro', 'Bahia', 'Botafogo (RJ)', 'Ceará', 'Corinthians', 'Cruzeiro', 'Flamengo', 'Fluminense',
+                                  'Fortaleza', 'Grêmio', 'Internacional', 'Juventude', 'Mirassol', 'Palmeiras', 'RB Bragantino', 'Santos',
+                                  'São Paulo', 'Sport Recife', 'Vasco da Gama', 'Vitória']})
 
 # Site
 ## Logo
@@ -80,9 +86,6 @@ with sidebar:
     st.header(f"Escolha um de nossos {df_model.shape[0]} modelos para a previsão:") # Adiciona o header a sidebar com o n° de modelos disponíveis
     selected_model = st.selectbox('Modelo: ', df_model.index) # Caixa de seleção de modelo
     st.markdown(df_model.loc[selected_model, 'Desc']) # Descrição do modelo escolhido
-
-## Seleciona a função baseada no modelo escolhido
-selected_function = df_model.loc[selected_model, 'Function']
 
 # Seletor de Times
 col1, col_vs, col2 = st.columns([4, 1, 4]) # Define as colunas
@@ -126,23 +129,53 @@ predicted_bool = st.button("Prever Resultado") # Botão para prever o resultado
 
 # Diplay condicional do resultado
 if(predicted_bool):
-    resultado = selected_function(TimeA, TimeB) # Calcula o resultado aplicando a função escolhida
-    with st.container(border=True): # Container para o "cartão" de apresentação do resultado
-        res_logo, res_text = st.columns([1, 3]) # Criação das colunas
+    if selected_model == 'Regressão Logística' or selected_model == 'KNN':
+        resultado = predict_result(TimeA, TimeB, home_df_minmax, away_df_minmax, models_to_select[selected_model])
+    else:
+        resultado = predict_result(TimeA, TimeB, home_df, away_df, models_to_select[selected_model])
 
-        # Na 1° coluna se adiciona a logo do time
-        with res_logo: 
-            # Logo do time vencedor
-            st.markdown(
-                f"<div style='text-align: center; padding-bottom: 15px;'><img src='data:image/png;base64,{img_to_base64(f"crests/{resultado}.png")}' height='150'></div>",
-                unsafe_allow_html=True
-            )
+    if resultado == 'D':
+        with st.container(border=True): # Container para o "cartão" de apresentação do resultado
+            res_logo1, res_logo2, res_text = st.columns([1, 1, 3]) # Criação das colunas
 
-        # Na 2° coluna se coloca o anúncio da vitória (texto)
-        with res_text:
-            st.title(f"Vencedor: {resultado}") # Texto resultado
-            st.caption(f"Previsão de acordo com {selected_model}") # Legenda mostra o modelo responsável pela previsão
-    
+            # Na 1° coluna se adiciona a logo do time da casa
+            with res_logo1: 
+                # Logo do time da casa
+                st.markdown(
+                    f"<div style='text-align: center; padding-bottom: 15px;'><img src='data:image/png;base64,{img_to_base64(f"crests/{TimeA}.png")}' height='150'></div>",
+                    unsafe_allow_html=True
+                )
+
+            # Na 2° coluna se adiciona a logo do time de fora
+            with res_logo2: 
+                # Logo do time de fora
+                st.markdown(
+                    f"<div style='text-align: center; padding-bottom: 15px;'><img src='data:image/png;base64,{img_to_base64(f"crests/{TimeB}.png")}' height='150'></div>",
+                    unsafe_allow_html=True
+                )
+
+            # Na 3° coluna se coloca o anúncio de empate
+            with res_text:
+                st.title(f"Empate") # Texto resultado
+    else:
+        if resultado == 'W':
+            resultado = TimeA
+        else:
+            resultado = TimeB
+        with st.container(border=True): # Container para o "cartão" de apresentação do resultado
+            res_logo, res_text = st.columns([1, 3]) # Criação das colunas
+
+            # Na 1° coluna se adiciona a logo do time
+            with res_logo: 
+                # Logo do time vencedor
+                st.markdown(
+                    f"<div style='text-align: center; padding-bottom: 15px;'><img src='data:image/png;base64,{img_to_base64(f"crests/{resultado}.png")}' height='150'></div>",
+                    unsafe_allow_html=True
+                )
+
+            # Na 2° coluna se coloca o anúncio da vitória (texto)
+            with res_text:
+                st.title(f"Vencedor: {resultado}") # Texto resultado    
 
 
 

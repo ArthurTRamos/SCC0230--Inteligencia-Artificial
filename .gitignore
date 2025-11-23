@@ -1,0 +1,25 @@
+# Ambiente e dependências locais
+env/
+venv/
+.venv/
+conda-env/
+fut_env/
+
+# Arquivos grandes / temporários
+*.xlsx
+*.parquet
+*.pkl
+*.h5
+*.zip
+*.rar
+
+# Cache
+__pycache__/
+.ipynb_checkpoints/
+
+# Arquivos de IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
