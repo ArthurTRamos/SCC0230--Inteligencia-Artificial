@@ -18,4 +18,30 @@ Integrantes:
 
 ### 3. Algoritmos de Machine Learning
 
+### Como Rodar
+
+#### Python (Pip) + Venv
+
+Clone o repositório, crie um ambiente virtual e utilize o comando:
+
+```
+pip install -r requirements.txt
+```
+
+#### Conda
+
+Clone o repositório e crie o ambiente conda com:
+
+```
+conda env create -f environment.yml
+```
+
+Então, ative o ambiente com ```conda activate```.
+
+Após as etapas, execute o app:
+
+```
+streamlit run app.py
+```
+
 ### Conclusões
