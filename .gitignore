@@ -11,6 +11,7 @@ fut_env/
 *.h5
 *.zip
 *.rar
+*.sh
 
 # Cache
 __pycache__/
