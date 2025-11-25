@@ -8,7 +8,6 @@ fut_env/
 # Arquivos grandes / temporários
 *.xlsx
 *.parquet
-*.pkl
 *.h5
 *.zip
 *.rar
