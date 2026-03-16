@@ -188,7 +188,7 @@ params = {
 Melhores parâmetros encontrados: `n_estimators=241`, `learning_rate=0.005`, `max_depth=7`
 
 **Resultado (interface):**
-![Predição com XGBoost](images/xgboost.png)
+![Predição com XGBoost](Images/XGBoost.png)
 
 ---
 
@@ -197,7 +197,7 @@ Melhores parâmetros encontrados: `n_estimators=241`, `learning_rate=0.005`, `ma
 Também otimizado com **Optuna**, o Random Forest constrói múltiplas árvores de decisão independentes e agrega seus votos para a classificação final.
 
 **Resultado (interface):**
-![Predição com Random Forest](images/random_forest.png)
+![Predição com Random Forest](Images/RF.png)
 
 ---
 
@@ -217,7 +217,7 @@ param_grid = {
 - Melhores parâmetros (2 labels): `C=0.01`, `penalty='l2'`, `class_weight='balanced'`
 
 **Resultado (interface):**
-![Predição com Regressão Logística](images/regressao_logistica.png)
+![Predição com Regressão Logística](Images/RL.png)
 
 ---
 
@@ -228,7 +228,7 @@ O KNN foi testado com todos os valores de `k` entre 2 e 39. Os melhores valores 
 - `k=27` para 2 labels (acurácia ~57%)
 
 **Resultado (interface):**
-![Predição com KNN](images/knn.png)
+![Predição com KNN](Images/KNN.png)
 
 ---
 
